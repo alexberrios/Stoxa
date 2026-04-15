@@ -98,13 +98,20 @@ export function ProductosFilters({ categories }: Props) {
           })
         }
         disabled={pending}
+        itemToStringLabel={(id) => {
+          if (id === "all") return "Todos los estados";
+          if (id === "ok") return "Stock normal";
+          if (id === "low") return "Bajo stock";
+          if (id === "out") return "Sin stock";
+          return "";
+        }}
       >
         <SelectTrigger className="w-full sm:w-[200px]">
           <SelectValue placeholder="Estado" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Todos los estados</SelectItem>
-          <SelectItem value="ok">Stock OK</SelectItem>
+          <SelectItem value="ok">Stock normal</SelectItem>
           <SelectItem value="low">Bajo stock</SelectItem>
           <SelectItem value="out">Sin stock</SelectItem>
         </SelectContent>
