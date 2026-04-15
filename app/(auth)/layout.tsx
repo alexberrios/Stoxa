@@ -1,3 +1,5 @@
+import { StoxaBrandLockup } from "@/components/stoxa-logo";
+
 export default function AuthLayout({
   children,
 }: {
@@ -22,7 +24,14 @@ export default function AuthLayout({
         className="pointer-events-none absolute -right-16 bottom-0 size-80 rounded-full bg-chart-2/20 blur-3xl dark:bg-chart-2/15"
         aria-hidden
       />
-      <div className="relative z-10 w-full">{children}</div>
+      <div className="relative z-10 flex w-full flex-col items-center">
+        <StoxaBrandLockup
+          href="/"
+          className="mb-8 scale-[1.02] sm:mb-10"
+          markClassName="drop-shadow-[0_0_20px_oklch(0.55_0.12_200/0.35)]"
+        />
+        {children}
+      </div>
     </div>
   );
 }

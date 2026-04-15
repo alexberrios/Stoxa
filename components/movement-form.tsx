@@ -106,6 +106,9 @@ export function MovementForm({ products }: Props) {
         <Select
           value={type}
           onValueChange={(v) => v && setType(v as "IN" | "OUT")}
+          itemToStringLabel={(v) =>
+            v === "IN" ? "Entrada" : v === "OUT" ? "Salida" : ""
+          }
         >
           <SelectTrigger>
             <SelectValue />

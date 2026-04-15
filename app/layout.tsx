@@ -22,8 +22,15 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Inventario — PYMES",
-  description: "Gestión de inventario para pequeños negocios",
+  title: {
+    default: "Stoxa — Gestiona tu stock",
+    template: "%s · Stoxa",
+  },
+  description:
+    "Stoxa: inventario, movimientos y alertas para equipos que quieren stock claro.",
+  icons: {
+    icon: [{ url: "/stoxa-icon.svg", type: "image/svg+xml" }],
+  },
 };
 
 export default function RootLayout({

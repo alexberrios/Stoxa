@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { StoxaBrandLockup } from "@/components/stoxa-logo";
 
 const nav = [
   { href: "/", label: "Inicio", icon: LayoutDashboard },
@@ -60,16 +61,18 @@ function SidebarNavLinks({
             href={href}
             onClick={() => onNavigate?.()}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-[color,background-color,transform,box-shadow] duration-200",
+              "relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-[color,background-color,transform,box-shadow] duration-200",
               active
-                ? "bg-sidebar-primary/12 text-sidebar-primary shadow-sm ring-1 ring-sidebar-primary/20 dark:bg-sidebar-primary/18 dark:ring-sidebar-primary/25"
-                : "text-sidebar-foreground hover:bg-sidebar-accent/90 hover:translate-x-0.5",
+                ? "bg-primary/15 text-foreground shadow-md shadow-black/25 ring-1 ring-primary/25 before:absolute before:top-1.5 before:bottom-1.5 before:left-0 before:w-[3px] before:rounded-full before:bg-primary"
+                : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:translate-x-0.5",
             )}
           >
-            <Icon className="size-4 shrink-0" />
+            <Icon
+              className={cn("size-4 shrink-0", active ? "text-primary" : "")}
+            />
             <span className="flex-1">{label}</span>
             {showBadge ? (
-              <Badge variant="destructive" className="text-xs">
+              <Badge variant="warning" className="text-xs">
                 {lowStockCount > 99 ? "99+" : lowStockCount}
               </Badge>
             ) : null}
@@ -96,16 +99,8 @@ export function AppSidebar({ lowStockCount }: Props) {
   return (
     <>
       <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar/95 text-sidebar-foreground shadow-[4px_0_24px_-8px_oklch(0.3_0.04_250/0.12)] backdrop-blur-sm dark:shadow-[4px_0_28px_-6px_oklch(0_0_0/0.35)] md:flex">
-        <div className="flex h-16 items-center border-b border-sidebar-border px-4">
-          <Link
-            href="/"
-            className="font-heading text-lg font-semibold tracking-tight text-sidebar-foreground"
-          >
-            <span className="text-sidebar-primary">Inventario</span>
-            <span className="ml-1.5 text-xs font-sans font-normal text-muted-foreground">
-              PYMES
-            </span>
-          </Link>
+        <div className="flex h-16 items-center border-b border-sidebar-border px-3">
+          <StoxaBrandLockup href="/" tone="sidebar" className="min-w-0 px-1 py-0.5" />
         </div>
         <div className="flex flex-1 flex-col gap-4 p-3">
           <SidebarNavLinks pathname={pathname} lowStockCount={lowStockCount} />
@@ -133,8 +128,8 @@ export function AppSidebar({ lowStockCount }: Props) {
             <Menu className="size-4" />
           </SheetTrigger>
           <SheetContent side="left" className="w-72 bg-sidebar p-0 text-sidebar-foreground">
-            <div className="flex h-14 items-center border-b border-sidebar-border px-4">
-              <span className="font-semibold">Inventario</span>
+            <div className="flex h-14 items-center border-b border-sidebar-border px-3">
+              <StoxaBrandLockup href="/" tone="sidebar" size="sm" />
             </div>
             <div className="p-3">
               <SidebarNavLinks
@@ -155,11 +150,15 @@ export function AppSidebar({ lowStockCount }: Props) {
             </div>
           </SheetContent>
         </Sheet>
-        <Link href="/" className="font-heading font-semibold tracking-tight">
-          Inventario
-        </Link>
+        <StoxaBrandLockup
+          href="/"
+          tone="sidebar"
+          size="sm"
+          subtitle={null}
+          className="min-w-0 px-1"
+        />
         {lowStockCount > 0 ? (
-          <Badge variant="destructive">{lowStockCount > 99 ? "99+" : lowStockCount}</Badge>
+          <Badge variant="warning">{lowStockCount > 99 ? "99+" : lowStockCount}</Badge>
         ) : (
           <span className="w-8" />
         )}

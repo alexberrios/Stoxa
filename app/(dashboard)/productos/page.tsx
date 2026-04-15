@@ -33,12 +33,8 @@ function estadoLabel(p: { quantity: number; min_stock: number }) {
   if (p.quantity === 0)
     return <Badge variant="destructive">Sin stock</Badge>;
   if (p.quantity <= p.min_stock)
-    return (
-      <Badge className="bg-amber-600 text-white hover:bg-amber-600/90">
-        Bajo stock
-      </Badge>
-    );
-  return <Badge variant="secondary">OK</Badge>;
+    return <Badge variant="warning">Bajo stock</Badge>;
+  return <Badge variant="success">OK</Badge>;
 }
 
 export default async function ProductosPage({

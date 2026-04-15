@@ -75,7 +75,7 @@ export default async function DashboardPage() {
           Inicio
         </h1>
         <p className="max-w-xl text-muted-foreground">
-          Resumen de tu inventario y última actividad.
+          Resumen de stock en Stoxa y última actividad.
         </p>
       </div>
 
@@ -108,10 +108,10 @@ export default async function DashboardPage() {
         <Card className="shadow-sm transition-shadow hover:shadow-md">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Bajo stock</CardTitle>
-            <TrendingDown className="size-4 text-amber-600" />
+            <TrendingDown className="size-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold tabular-nums text-amber-700 dark:text-amber-500">
+            <p className="text-2xl font-bold tabular-nums text-warning">
               {lowFromRpc}
             </p>
             <CardDescription>
@@ -119,8 +119,14 @@ export default async function DashboardPage() {
             </CardDescription>
           </CardContent>
         </Card>
-        <Card className="flex flex-col justify-center border-dashed border-primary/25 bg-primary/[0.03] shadow-sm dark:bg-primary/[0.06]">
+        <Card className="flex flex-col justify-center border-dashed border-primary/30 bg-primary/[0.04] dark:bg-primary/[0.07]">
           <CardContent className="flex flex-col gap-2 pt-6">
+            <Link
+              href="/movimientos"
+              className={cn(buttonVariants({ variant: "default" }), "w-full")}
+            >
+              Registrar movimiento
+            </Link>
             <Link
               href="/productos?estado=low"
               className={cn(
@@ -130,12 +136,6 @@ export default async function DashboardPage() {
             >
               Ver alertas
               <ArrowRight className="size-4" />
-            </Link>
-            <Link
-              href="/movimientos"
-              className={cn(buttonVariants({ variant: "secondary" }), "w-full")}
-            >
-              Registrar movimiento
             </Link>
           </CardContent>
         </Card>

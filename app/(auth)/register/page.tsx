@@ -50,7 +50,7 @@ export default function RegisterPage() {
       <CardHeader className="space-y-1">
         <CardTitle className="font-heading text-2xl">Crear cuenta</CardTitle>
         <CardDescription>
-          Registra tu negocio para empezar a controlar stock y movimientos.
+          Crea tu espacio en Stoxa y empieza a controlar stock y movimientos.
         </CardDescription>
         <p className="text-xs text-muted-foreground">
           Al registrarte, se enviará un email de confirmación a tu correo.

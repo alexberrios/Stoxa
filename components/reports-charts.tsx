@@ -1,12 +1,12 @@
 "use client";
 
 import {
+  Area,
   Bar,
   BarChart,
   CartesianGrid,
+  ComposedChart,
   Legend,
-  Line,
-  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -39,6 +39,12 @@ export function ReportsCharts({
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={valueByCategory} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
+                <defs>
+                  <linearGradient id="inventoryBarCyan" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--color-chart-1)" stopOpacity={0.95} />
+                    <stop offset="100%" stopColor="var(--color-chart-1)" stopOpacity={0.06} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                 <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                 <YAxis
@@ -61,7 +67,12 @@ export function ReportsCharts({
                   }}
                   labelFormatter={(label) => `Categoría: ${label}`}
                 />
-                <Bar dataKey="valor" name="Valor" fill="var(--color-chart-1)" radius={[4, 4, 0, 0]} />
+                <Bar
+                  dataKey="valor"
+                  name="Valor"
+                  fill="url(#inventoryBarCyan)"
+                  radius={[4, 4, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -77,29 +88,41 @@ export function ReportsCharts({
             <p className="text-sm text-muted-foreground">Sin movimientos en el periodo.</p>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={movementsByDay} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
+              <ComposedChart data={movementsByDay} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
+                <defs>
+                  <linearGradient id="entradasAreaFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--color-chart-2)" stopOpacity={0.4} />
+                    <stop offset="100%" stopColor="var(--color-chart-2)" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="salidasAreaFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--color-chart-4)" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="var(--color-chart-4)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                 <XAxis dataKey="fecha" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 12 }} allowDecimals={false} />
                 <Tooltip />
                 <Legend />
-                <Line
+                <Area
                   type="monotone"
                   dataKey="entradas"
                   name="Entradas (uds.)"
                   stroke="var(--color-chart-2)"
                   strokeWidth={2}
+                  fill="url(#entradasAreaFill)"
                   dot={false}
                 />
-                <Line
+                <Area
                   type="monotone"
                   dataKey="salidas"
                   name="Salidas (uds.)"
                   stroke="var(--color-chart-4)"
                   strokeWidth={2}
+                  fill="url(#salidasAreaFill)"
                   dot={false}
                 />
-              </LineChart>
+              </ComposedChart>
             </ResponsiveContainer>
           )}
         </div>

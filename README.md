@@ -1,4 +1,4 @@
-# Inventario PYMES
+# Stoxa
 
 Aplicación web de gestión de inventario para pequeños negocios: productos, categorías, movimientos de stock, alertas de bajo stock, códigos QR e informes con exportación CSV.
 

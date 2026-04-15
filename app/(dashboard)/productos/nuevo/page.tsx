@@ -22,7 +22,7 @@ export default async function NuevoProductoPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Nuevo producto</h1>
         <p className="text-muted-foreground">
-          Añade un artículo al inventario con SKU único en tu cuenta.
+          Añade un artículo a tu catálogo en Stoxa con SKU único en tu cuenta.
         </p>
       </div>
       <ProductForm

@@ -46,7 +46,7 @@ export default function LoginPage() {
       <CardHeader className="space-y-1">
         <CardTitle className="font-heading text-2xl">Iniciar sesión</CardTitle>
         <CardDescription>
-          Accede con tu correo y contraseña para gestionar el inventario.
+          Entra a Stoxa con tu correo y contraseña para ver stock y movimientos.
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
