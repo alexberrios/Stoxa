@@ -1,17 +1,12 @@
 import { AppSidebar } from "@/components/app-sidebar";
-import { createClient } from "@/lib/supabase/server";
+import { getLowStockCount } from "@/lib/queries/low-stock";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  let lowStockCount = 0;
-  const { data, error } = await supabase.rpc("count_low_stock");
-  if (!error && typeof data === "number") {
-    lowStockCount = data;
-  }
+  const lowStockCount = await getLowStockCount();
 
   return (
     <div className="flex min-h-screen flex-col bg-transparent md:flex-row">

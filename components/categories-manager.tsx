@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import type { Category } from "@/lib/types";
@@ -23,6 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -40,12 +42,14 @@ type Props = {
 };
 
 export function CategoriesManager({ initialCategories }: Props) {
+  const router = useRouter();
   const [categories, setCategories] = useState(initialCategories);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Category | null>(null);
   const [name, setName] = useState("");
   const [color, setColor] = useState("#6366f1");
   const [loading, setLoading] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<Category | null>(null);
 
   function openCreate() {
     setEditing(null);
@@ -81,11 +85,12 @@ export function CategoriesManager({ initialCategories }: Props) {
     }
     toast.success(editing ? "Categoría actualizada" : "Categoría creada");
     setOpen(false);
-    window.location.reload();
+    router.refresh();
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("¿Eliminar esta categoría?")) return;
+  async function handleConfirmDelete() {
+    if (!pendingDelete) return;
+    const id = pendingDelete.id;
     const res = await deleteCategory(id);
     if ("error" in res && res.error) {
       toast.error(
@@ -95,6 +100,7 @@ export function CategoriesManager({ initialCategories }: Props) {
     }
     toast.success("Categoría eliminada");
     setCategories((prev) => prev.filter((c) => c.id !== id));
+    router.refresh();
   }
 
   return (
@@ -202,7 +208,7 @@ export function CategoriesManager({ initialCategories }: Props) {
                         type="button"
                         variant="ghost"
                         size="icon-sm"
-                        onClick={() => void handleDelete(c.id)}
+                        onClick={() => setPendingDelete(c)}
                         aria-label="Eliminar"
                       >
                         <Trash2 className="size-4" />
@@ -215,6 +221,21 @@ export function CategoriesManager({ initialCategories }: Props) {
           </div>
         )}
       </CardContent>
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        onOpenChange={(next) => {
+          if (!next) setPendingDelete(null);
+        }}
+        title="Eliminar categoría"
+        description={
+          pendingDelete
+            ? `¿Seguro que quieres eliminar "${pendingDelete.name}"? Esta acción no se puede deshacer.`
+            : undefined
+        }
+        confirmLabel="Eliminar"
+        destructive
+        onConfirm={handleConfirmDelete}
+      />
     </Card>
   );
 }

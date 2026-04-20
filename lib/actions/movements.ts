@@ -11,10 +11,10 @@ export async function applyStockMovement(input: unknown) {
   }
   const supabase = await createClient();
   const { occurred_at, ...rest } = parsed.data;
-  const iso =
-    occurred_at.includes("T") && !occurred_at.endsWith("Z") && !/[+-]\d{2}:?\d{2}$/.test(occurred_at)
-      ? new Date(occurred_at).toISOString()
-      : new Date(occurred_at).toISOString();
+  if (Number.isNaN(Date.parse(occurred_at))) {
+    return { error: "Fecha inválida" };
+  }
+  const iso = new Date(occurred_at).toISOString();
 
   const { error } = await supabase.rpc("apply_stock_movement", {
     p_product_id: rest.product_id,

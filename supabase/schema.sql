@@ -65,6 +65,21 @@ create policy "products_all_own"
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
+create or replace function public.set_products_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+drop trigger if exists set_products_updated_at on public.products;
+create trigger set_products_updated_at
+  before update on public.products
+  for each row execute function public.set_products_updated_at();
+
 -- Movimientos de stock
 create table public.stock_movements (
   id uuid primary key default gen_random_uuid(),

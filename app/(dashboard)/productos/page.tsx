@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { ProductImage } from "@/components/product-image";
 import { ProductosFilters } from "@/components/productos-filters";
+import { buildIlikeOrPattern } from "@/lib/search";
 import type { Category } from "@/lib/types";
 
 type Row = {
@@ -62,7 +63,7 @@ export default async function ProductosPage({
     .order("name");
 
   if (q) {
-    query = query.or(`name.ilike.%${q}%,sku.ilike.%${q}%`);
+    query = query.or(buildIlikeOrPattern(q, ["name", "sku"]));
   }
   if (categoria && categoria !== "all") {
     query = query.eq("category_id", categoria);

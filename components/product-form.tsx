@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import type { Category, Product } from "@/lib/types";
@@ -45,25 +45,19 @@ export function ProductForm({
   const [minStock, setMinStock] = useState(String(product?.min_stock ?? "0"));
   const [file, setFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const previewUrl = useMemo(
+    () => (file ? URL.createObjectURL(file) : null),
+    [file],
+  );
   useEffect(() => {
-    if (!file) {
-      setPreviewUrl(null);
-      return;
-    }
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [file]);
+    if (!previewUrl) return;
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [previewUrl]);
 
-  useEffect(() => {
-    if (!categoryId) return;
-    if (!categories.some((c) => c.id === categoryId)) {
-      setCategoryId("");
-    }
-  }, [categories, categoryId]);
+  const effectiveCategoryId =
+    categoryId && categories.some((c) => c.id === categoryId) ? categoryId : "";
 
   function handleImageFile(next: File | null) {
     if (!next) {
@@ -94,7 +88,7 @@ export function ProductForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!categoryId) {
+    if (!effectiveCategoryId) {
       toast.error("Selecciona una categoría");
       return;
     }
@@ -104,7 +98,7 @@ export function ProductForm({
       const payload = {
         name,
         sku,
-        category_id: categoryId,
+        category_id: effectiveCategoryId,
         price: Number(price),
         quantity: Number(quantity),
         min_stock: Number(minStock),
@@ -167,7 +161,7 @@ export function ProductForm({
         <div className="space-y-2">
           <Label>Categoría</Label>
           <Select
-            value={categoryId}
+            value={effectiveCategoryId}
             onValueChange={(v) => v != null && setCategoryId(v)}
             required
             itemToStringLabel={(id) =>

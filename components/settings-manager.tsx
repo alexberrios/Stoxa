@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import type { ExchangeRate, TeamUser } from "@/lib/types";
@@ -13,6 +14,7 @@ import {
 } from "@/lib/actions/settings";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import {
   Card,
   CardContent,
@@ -62,6 +64,7 @@ const roleLabel: Record<TeamRole, string> = {
 };
 
 export function SettingsManager({ initialTeamUsers, initialExchangeRates }: Props) {
+  const router = useRouter();
   const [teamUsers, setTeamUsers] = useState(initialTeamUsers);
   const [exchangeRates, setExchangeRates] = useState(initialExchangeRates);
 
@@ -72,6 +75,9 @@ export function SettingsManager({ initialTeamUsers, initialExchangeRates }: Prop
   const [teamRole, setTeamRole] = useState<TeamRole>("OPERADOR");
   const [teamActive, setTeamActive] = useState(true);
   const [teamLoading, setTeamLoading] = useState(false);
+  const [pendingTeamDelete, setPendingTeamDelete] = useState<TeamUser | null>(
+    null,
+  );
 
   const [rateOpen, setRateOpen] = useState(false);
   const [editingRate, setEditingRate] = useState<ExchangeRate | null>(null);
@@ -80,6 +86,9 @@ export function SettingsManager({ initialTeamUsers, initialExchangeRates }: Prop
   const [rateValue, setRateValue] = useState("1");
   const [rateIsBase, setRateIsBase] = useState(true);
   const [rateLoading, setRateLoading] = useState(false);
+  const [pendingRateDelete, setPendingRateDelete] = useState<ExchangeRate | null>(
+    null,
+  );
 
   const sortedRates = useMemo(
     () =>
@@ -148,11 +157,12 @@ export function SettingsManager({ initialTeamUsers, initialExchangeRates }: Prop
 
     toast.success(editingTeam ? "Usuario actualizado" : "Usuario añadido");
     setTeamOpen(false);
-    window.location.reload();
+    router.refresh();
   }
 
-  async function handleDeleteTeam(id: string) {
-    if (!confirm("¿Eliminar este usuario de la configuración?")) return;
+  async function handleConfirmTeamDelete() {
+    if (!pendingTeamDelete) return;
+    const id = pendingTeamDelete.id;
     const res = await deleteTeamUser(id);
     if ("error" in res && res.error) {
       toast.error(typeof res.error === "string" ? res.error : "No se pudo eliminar");
@@ -160,6 +170,7 @@ export function SettingsManager({ initialTeamUsers, initialExchangeRates }: Prop
     }
     toast.success("Usuario eliminado");
     setTeamUsers((prev) => prev.filter((row) => row.id !== id));
+    router.refresh();
   }
 
   async function handleSubmitRate(e: React.FormEvent) {
@@ -184,11 +195,12 @@ export function SettingsManager({ initialTeamUsers, initialExchangeRates }: Prop
 
     toast.success(editingRate ? "Tipo de cambio actualizado" : "Tipo de cambio creado");
     setRateOpen(false);
-    window.location.reload();
+    router.refresh();
   }
 
-  async function handleDeleteRate(id: string) {
-    if (!confirm("¿Eliminar esta moneda?")) return;
+  async function handleConfirmRateDelete() {
+    if (!pendingRateDelete) return;
+    const id = pendingRateDelete.id;
     const res = await deleteExchangeRate(id);
     if ("error" in res && res.error) {
       toast.error(typeof res.error === "string" ? res.error : "No se pudo eliminar");
@@ -196,6 +208,7 @@ export function SettingsManager({ initialTeamUsers, initialExchangeRates }: Prop
     }
     toast.success("Moneda eliminada");
     setExchangeRates((prev) => prev.filter((row) => row.id !== id));
+    router.refresh();
   }
 
   return (
@@ -263,7 +276,7 @@ export function SettingsManager({ initialTeamUsers, initialExchangeRates }: Prop
                             type="button"
                             variant="ghost"
                             size="icon-sm"
-                            onClick={() => void handleDeleteTeam(row.id)}
+                            onClick={() => setPendingTeamDelete(row)}
                             aria-label="Eliminar usuario"
                           >
                             <Trash2 className="size-4" />
@@ -344,7 +357,7 @@ export function SettingsManager({ initialTeamUsers, initialExchangeRates }: Prop
                             type="button"
                             variant="ghost"
                             size="icon-sm"
-                            onClick={() => void handleDeleteRate(row.id)}
+                            onClick={() => setPendingRateDelete(row)}
                             aria-label="Eliminar tipo de cambio"
                           >
                             <Trash2 className="size-4" />
@@ -497,6 +510,38 @@ export function SettingsManager({ initialTeamUsers, initialExchangeRates }: Prop
           </form>
         </DialogContent>
       </Dialog>
+
+      <ConfirmDialog
+        open={pendingTeamDelete !== null}
+        onOpenChange={(next) => {
+          if (!next) setPendingTeamDelete(null);
+        }}
+        title="Eliminar usuario"
+        description={
+          pendingTeamDelete
+            ? `¿Seguro que quieres eliminar a "${pendingTeamDelete.name}" de la configuración?`
+            : undefined
+        }
+        confirmLabel="Eliminar"
+        destructive
+        onConfirm={handleConfirmTeamDelete}
+      />
+
+      <ConfirmDialog
+        open={pendingRateDelete !== null}
+        onOpenChange={(next) => {
+          if (!next) setPendingRateDelete(null);
+        }}
+        title="Eliminar moneda"
+        description={
+          pendingRateDelete
+            ? `¿Seguro que quieres eliminar la moneda ${pendingRateDelete.code} (${pendingRateDelete.name})?`
+            : undefined
+        }
+        confirmLabel="Eliminar"
+        destructive
+        onConfirm={handleConfirmRateDelete}
+      />
     </Tabs>
   );
 }

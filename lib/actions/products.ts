@@ -57,7 +57,6 @@ export async function updateProduct(id: string, input: unknown) {
       quantity: parsed.data.quantity,
       min_stock: parsed.data.min_stock,
       image_url: normalizeImageUrl(parsed.data.image_url ?? null),
-      updated_at: new Date().toISOString(),
     })
     .eq("id", id);
   if (error) {

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Package, TrendingDown, Wallet } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getDisplayCurrencyCode } from "@/lib/currency";
+import { getLowStockCount } from "@/lib/queries/low-stock";
 import {
   Card,
   CardContent,
@@ -25,11 +26,11 @@ export default async function DashboardPage() {
   const supabase = await createClient();
   const displayCurrency = await getDisplayCurrencyCode(supabase);
 
-  const [{ count: totalProducts }, { data: productsRows }, lowRpc, movementsRes] =
+  const [{ count: totalProducts }, { data: productsRows }, lowFromRpc, movementsRes] =
     await Promise.all([
       supabase.from("products").select("*", { count: "exact", head: true }),
       supabase.from("products").select("price, quantity, min_stock"),
-      supabase.rpc("count_low_stock"),
+      getLowStockCount(),
       supabase
         .from("stock_movements")
         .select(
@@ -52,11 +53,6 @@ export default async function DashboardPage() {
       (sum, p) => sum + Number(p.price) * p.quantity,
       0,
     ) ?? 0;
-
-  const lowStock =
-    productsRows?.filter((p) => p.quantity <= p.min_stock).length ?? 0;
-  const lowFromRpc =
-    typeof lowRpc.data === "number" ? lowRpc.data : lowStock;
 
   const movements = (movementsRes.data ?? []).map((m) => {
     const raw = m.products as
